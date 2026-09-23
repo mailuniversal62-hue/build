@@ -1,6 +1,5 @@
 // dropper.c — stage 1
-// Small binary. Downloads loader from C2, executes in memory, exits.
-// Attached to phishing email as Invoice_87431.pdf.exe
+//tangina nag crash laptop ko sa part na to bullshit
 
 #include <winsock2.h>
 #include <windows.h>
