@@ -1,3 +1,11 @@
 TEST TEST MESSAGE ME KAPAG MY ERROR 
 acecabael2010@gmail.com 
 ONLY FOR KALI LINUX 
+c lang PARA HINDI MADALI MA DETECT 
+ATTACK WINDOWS 
+NOT MACOS IOS NOT SUPPORTED PA 😆 
+GAWA NEXT TIME 
+
+Full chain with C2 + persistence
+
+C version for macOS
